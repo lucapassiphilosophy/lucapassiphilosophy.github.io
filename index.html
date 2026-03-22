@@ -57,6 +57,28 @@
       font-style: italic;
       margin-bottom: 0.3rem;
     }
+    .abstract-toggle {
+      font-size: 0.9rem;
+      color: #CC0000;
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: 'EB Garamond', serif;
+    }
+    .abstract-toggle:hover {
+      color: #FF0000;
+    }
+    .abstract {
+      display: none;
+      margin-top: 0.3rem;
+      margin-bottom: 0.3rem;
+      padding-left: 1rem;
+      border-left: 2px solid #CC0000;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
     footer {
       margin-top: 1rem;
       font-size: 0.85rem;
@@ -88,11 +110,30 @@
     [<a href="https://philpapers.org/rec/PASPBN" target="_blank">Preprint</a>]
     [<a href="https://academic.oup.com/pq/article/73/4/1004/7222498" target="_blank">Published version</a>]
   </p>
+  <p>
+    <button class="abstract-toggle" onclick="toggleAbstract()">Abstract ▸</button>
+  </p>
+  <div class="abstract" id="abstract-pna">
+    This paper develops a new theory of the morality of promissory obligations. T. M. Scanlon notoriously argued that promising consists in assuring the promisee that we will do something. I disagree. I argue that it is true that promising consists in assuring the promisee, but what the promisor gives to the promisee is not an assurance that they will do something, but that the normative situation is in a certain way.
+  </div>
   <h2>Contact</h2>
   <p>Email: luca_passi@berkeley.edu</p>
   <p><a href="https://philpeople.org/profiles/luca-alberto-passi" target="_blank">PhilPeople</a></p>
   <footer>
     &copy; 2026 Luca Passi &middot; UC Berkeley Department of Philosophy
   </footer>
+  <script>
+    function toggleAbstract() {
+      var abs = document.getElementById('abstract-pna');
+      var btn = document.querySelector('.abstract-toggle');
+      if (abs.style.display === 'block') {
+        abs.style.display = 'none';
+        btn.textContent = 'Abstract ▸';
+      } else {
+        abs.style.display = 'block';
+        btn.textContent = 'Abstract ▾';
+      }
+    }
+  </script>
 </body>
 </html>
