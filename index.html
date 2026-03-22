@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luca Passi</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      color: #222;
+      background: #fafaf8;
+      line-height: 1.75;
+    }
+
+    header {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: normal;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.4rem;
+    }
+
+    header p.subtitle {
+      font-size: 1rem;
+      color: #b0b8d1;
+      font-style: italic;
+    }
+
+    nav {
+      background: #16213e;
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      padding: 0.85rem 1rem;
+    }
+
+    nav a {
+      color: #c8d0e7;
+      text-decoration: none;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+
+    main {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #1a1a2e;
+      border-bottom: 2px solid #1a1a2e;
+      padding-bottom: 0.4rem;
+      margin-bottom: 1.2rem;
+    }
+
+    section p {
+      font-size: 1.05rem;
+      color: #333;
+      margin-bottom: 0.8rem;
+    }
+
+    .publication {
+      margin-bottom: 1.2rem;
+      padding-left: 1rem;
+      border-left: 3px solid #c8d0e7;
+    }
+
+    .publication .title {
+      font-style: italic;
+      font-size: 1.05rem;
+      color: #1a1a2e;
+    }
+
+    .publication .venue {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .publication .tag {
+      display: inline-block;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.72rem;
+      background: #e8ecf5;
+      color: #1a1a2e;
+      border-radius: 3px;
+      padding: 0.1rem 0.5rem;
+      margin-right: 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .interests-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .interests-list li {
+      font-size: 1.05rem;
+      color: #333;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .interests-list li:last-child {
+      border-bottom: none;
+    }
+
+    .interests-list li::before {
+      content: "→ ";
+      color: #1a1a2e;
+      font-weight: bold;
+    }
+
+    .contact-line {
+      font-size: 1.05rem;
+      color: #333;
+    }
+
+    .contact-line a {
+      color: #1a1a2e;
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 0.8rem;
+      color: #999;
+      padding: 2rem 1rem;
+      border-top: 1px solid #e5e5e5;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Luca Passi</h1>
+    <p class="subtitle">PhD Student in Philosophy &middot; UC Berkeley</p>
+  </header>
+
+  <nav>
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#interests">Research</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <main>
+
+    <section id="about">
+      <h2>About</h2>
+      <p>
+        I'm a PhD student in Philosophy at UC Berkeley. My interests are mainly in moral theory.
+        I also have secondary interests in philosophy of language and normative decision theory.
+      </p>
+      <p>
+        Before coming to Berkeley, I studied in Pavia (BA), London, and Cambridge (MPhil).
+      </p>
+    </section>
+
+    <section id="work">
+      <h2>Work</h2>
+      <div class="publication">
+        <div class="title">Promising by Normative Assurance</div>
+        <div class="venue" style="margin-top: 0.3rem;">
+          <span class="tag">Preprint</span>
+          <span class="tag">Forthcoming</span>
+          <em>The Philosophical Quarterly</em> &middot; 2023
+        </div>
+      </div>
+    </section>
+
+    <section id="interests">
+      <h2>Research Interests</h2>
+      <p>I am currently working on two essays:</p>
+      <ul class="interests-list">
+        <li>The moral significance of projects</li>
+        <li>A general theory of normative powers and conventional obligations</li>
+      </ul>
+      <p style="margin-top: 1.2rem;">I also have a couple of side projects:</p>
+      <ul class="interests-list">
+        <li>The paradoxes of factivity for epistemic modals <em>(philosophy of language)</em></li>
+        <li>Diachronic issues for risk-averse agents <em>(decision theory)</em></li>
+      </ul>
+      <p style="margin-top: 1.2rem;">I'm happy to share drafts on each of these. Cheers!</p>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p class="contact-line">
+        Email: <a href="mailto:luca_passi@berkeley.edu">luca_passi@berkeley.edu</a>
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    &copy; 2026 Luca Passi &middot; UC Berkeley Department of Philosophy
+  </footer>
+
+</body>
+</html>
