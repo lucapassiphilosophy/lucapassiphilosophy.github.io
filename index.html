@@ -107,7 +107,7 @@
 
   <div style="margin-top: 1rem;">
     <button id="beat-btn" class="btn" onclick="toggleBeat()">▶ Play Beat</button>
-    <button class="btn" onclick="fastenColors()">⚡ Fasten Color Change</button>
+    <button id="fasten-btn" class="btn" onclick="fastenColors()">⚡ Fasten Color Change</button>
   </div>
 
   <footer>&copy; 2026 Luca Passi</footer>
@@ -127,9 +127,21 @@
     let colorInterval = setInterval(cycleBackground, 3000);
     cycleBackground();
 
+    // ---- Fasten / slow color change ----
+    let fastened = false;
     function fastenColors() {
-      clearInterval(colorInterval);
-      colorInterval = setInterval(cycleBackground, 500);
+      const btn = document.getElementById('fasten-btn');
+      if (!fastened) {
+        clearInterval(colorInterval);
+        colorInterval = setInterval(cycleBackground, 500);
+        fastened = true;
+        btn.textContent = '⏹ Slow Color Change';
+      } else {
+        clearInterval(colorInterval);
+        colorInterval = setInterval(cycleBackground, 3000);
+        fastened = false;
+        btn.textContent = '⚡ Fasten Color Change';
+      }
     }
 
     // ---- Abstract toggle ----
@@ -223,3 +235,4 @@
   </script>
 </body>
 </html>
+
