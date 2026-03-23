@@ -9,7 +9,7 @@
     body {
       font-family: 'Times New Roman', Times, serif;
       color: black;
-      background: #F5DFA0;
+      background: #F5C842;
       margin: 20px auto;
       max-width: 680px;
       padding: 0;
@@ -64,6 +64,18 @@
       border-top: 1px solid black;
       padding-top: 0.3rem;
     }
+    .btn {
+      margin-top: 1rem;
+      margin-right: 0.5rem;
+      font-family: 'Times New Roman', serif;
+      background: none;
+      border: 1px solid #8B4513;
+      color: #8B4513;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .btn:hover { background: #8B4513; color: white; }
   </style>
 </head>
 <body>
@@ -93,9 +105,46 @@
   <p>Email: luca_passi@berkeley.edu</p>
   <p><a href="https://philpeople.org/profiles/luca-alberto-passi" target="_blank">PhilPeople</a></p>
 
+  <div style="margin-top: 1rem;">
+    <button id="beat-btn" class="btn" onclick="toggleBeat()">▶ Play Beat</button>
+    <button id="fasten-btn" class="btn" onclick="fastenColors()">⚡ Fasten Color Change</button>
+  </div>
+
   <footer>&copy; 2026 Luca Passi</footer>
 
   <script>
+    // ---- Background color cycle ----
+    const colors = [
+      '#F5DFA0', '#F5C842', '#F0E0B0', '#E8C97A',
+      '#F7E8C8', '#DEB887', '#F0D090', '#E8D5A3',
+      '#C8A96E', '#FAF0DC',
+    ];
+    let current = 0;
+    function cycleBackground() {
+      document.body.style.background = colors[current];
+      current = (current + 1) % colors.length;
+    }
+    let colorInterval = setInterval(cycleBackground, 3000);
+    cycleBackground();
+
+    // ---- Fasten / slow color change ----
+    let fastened = false;
+    function fastenColors() {
+      const btn = document.getElementById('fasten-btn');
+      if (!fastened) {
+        clearInterval(colorInterval);
+        colorInterval = setInterval(cycleBackground, 500);
+        fastened = true;
+        btn.textContent = '⏹ Slow Color Change';
+      } else {
+        clearInterval(colorInterval);
+        colorInterval = setInterval(cycleBackground, 3000);
+        fastened = false;
+        btn.textContent = '⚡ Fasten Color Change';
+      }
+    }
+
+    // ---- Abstract toggle ----
     function toggleAbstract() {
       var abs = document.getElementById('abstract-pna');
       var btn = document.querySelector('.abstract-toggle');
@@ -105,6 +154,82 @@
       } else {
         abs.style.display = 'block';
         btn.textContent = 'Abstract ▾';
+      }
+    }
+
+    // ---- Techno beat ----
+    let audioCtx = null;
+    let beatInterval = null;
+    let playing = false;
+    let step = 0;
+
+    function kick(ctx, time) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.setValueAtTime(150, time);
+      osc.frequency.exponentialRampToValueAtTime(0.001, time + 0.4);
+      gain.gain.setValueAtTime(1, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.4);
+      osc.start(time); osc.stop(time + 0.4);
+    }
+
+    function hihat(ctx, time, accent) {
+      const bufferSize = ctx.sampleRate * 0.05;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'highpass'; filter.frequency.value = 8000;
+      source.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(accent ? 0.4 : 0.15, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+      source.start(time); source.stop(time + 0.05);
+    }
+
+    function stab(ctx, time, freq) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, time);
+      osc.connect(gain); gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.3, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+      osc.start(time); osc.stop(time + 0.1);
+    }
+
+    const bpm = 138;
+    const stepTime = 60 / bpm / 2;
+    const kickPattern  = [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0];
+    const hihatPattern = [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1];
+    const hihatAccent  = [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0];
+    const stabPattern  = [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,1];
+    const stabFreqs    = [220, 165, 196];
+
+    function scheduleBeat() {
+      const now = audioCtx.currentTime;
+      if (kickPattern[step])  kick(audioCtx, now);
+      if (hihatPattern[step]) hihat(audioCtx, now, hihatAccent[step]);
+      if (stabPattern[step])  stab(audioCtx, now, stabFreqs[step % stabFreqs.length]);
+      step = (step + 1) % 16;
+    }
+
+    function toggleBeat() {
+      const btn = document.getElementById('beat-btn');
+      if (!playing) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        step = 0;
+        beatInterval = setInterval(scheduleBeat, stepTime * 1000);
+        playing = true;
+        btn.textContent = '⏹ Stop Beat';
+      } else {
+        clearInterval(beatInterval);
+        audioCtx.close();
+        playing = false;
+        btn.textContent = '▶ Play Beat';
       }
     }
   </script>
