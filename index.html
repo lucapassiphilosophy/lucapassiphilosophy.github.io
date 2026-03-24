@@ -25,8 +25,6 @@
     a:hover { color: #FF0000; }
     ul { margin: 0.2rem 0 0.3rem 1.2rem; }
     ul li { margin-bottom: 0.1rem; }
-    hr { border: none; border-top: 1px solid black; margin: 0.8rem 0; }
-    .subtitle { font-style: italic; margin-bottom: 0.3rem; }
     .abstract-toggle {
       font-size: 0.9rem; color: #CC0000; cursor: pointer;
       text-decoration: underline; background: none; border: none;
@@ -53,62 +51,12 @@
       font-size: 0.85rem;
     }
     .disco-btn:hover { background: #8B4513; color: white; }
-
-    /* Disco globe */
-    #disco-globe {
-      display: none;
+    #disco-canvas {
       position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%,
-        #ffffff 0%, #cccccc 15%, #888888 40%,
-        #444444 70%, #111111 100%);
-      box-shadow:
-        0 0 20px 6px rgba(255,255,255,0.6),
-        inset 0 0 15px rgba(255,255,255,0.3);
+      top: 0; left: 0;
+      pointer-events: none;
       z-index: 9999;
-      animation: globeDrop 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-    #disco-globe::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background:
-        repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(255,255,255,0.15) 8px, rgba(255,255,255,0.15) 9px),
-        repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(255,255,255,0.15) 8px, rgba(255,255,255,0.15) 9px);
-      animation: globeSpin 2s linear infinite;
-    }
-    #disco-globe::after {
-      content: '';
-      position: absolute;
-      inset: -30px;
-      border-radius: 50%;
-      background: conic-gradient(
-        rgba(255, 0, 200, 0.3) 0deg, transparent 30deg,
-        rgba(0, 200, 255, 0.3) 90deg, transparent 120deg,
-        rgba(255, 255, 0, 0.3) 180deg, transparent 210deg,
-        rgba(255, 0, 200, 0.3) 360deg
-      );
-      animation: beamSpin 1.5s linear infinite;
-      z-index: -1;
-    }
-    @keyframes globeDrop {
-      0%   { top: -120px; opacity: 0; }
-      60%  { top: 45%; opacity: 1; }
-      75%  { top: 42%; }
-      100% { top: 44%; opacity: 1; }
-    }
-    @keyframes globeSpin {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
-    @keyframes beamSpin {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
+      display: none;
     }
   </style>
 </head>
@@ -141,7 +89,7 @@
 
   <button id="disco-btn" class="disco-btn" onclick="toggleDisco()">🪩 Disco Mode</button>
 
-  <div id="disco-globe"></div>
+  <canvas id="disco-canvas"></canvas>
 
   <footer>&copy; 2026 Luca Passi</footer>
 
@@ -159,24 +107,88 @@
       }
     }
 
-    // ---- Disco Mode ----
-    let discoOn = false;
-    let audioCtx = null;
-    let beatInterval = null;
-    let colorInterval = null;
-    let step = 0;
+    // ---- Pixel disco ball ----
+    const BALL_R = 55;
+    const LAT_N  = 10;
+    const LON_MAX = 12;
+    const BALL_TARGET_Y = 140;
 
-    const discoColors = ['#ff6ec7', '#6ef9ff', '#f9ff6e'];
-    let colorStep = 0;
-
-    function cycleDiscoColor() {
-      document.body.style.background = discoColors[colorStep];
-      colorStep = (colorStep + 1) % discoColors.length;
+    function easeOutBounce(t) {
+      const n1 = 7.5625, d1 = 2.75;
+      if (t < 1/d1)       return n1*t*t;
+      if (t < 2/d1)       { t -= 1.5/d1;  return n1*t*t + 0.75; }
+      if (t < 2.5/d1)     { t -= 2.25/d1; return n1*t*t + 0.9375; }
+      t -= 2.625/d1;      return n1*t*t + 0.984375;
     }
 
+    function drawBall(ctx, cx, cy, t) {
+      const tileH = Math.max(2, Math.floor(Math.PI * BALL_R / LAT_N) - 1);
+
+      for (let li = 0; li < LAT_N; li++) {
+        const lat    = -Math.PI/2 + (li + 0.5) * Math.PI / LAT_N;
+        const cosLat = Math.cos(lat);
+        const sinLat = Math.sin(lat);
+        const rowR   = BALL_R * cosLat;
+        const y      = cy + BALL_R * sinLat;
+        if (rowR < 2) continue;
+
+        const lonN = Math.max(2, Math.round(LON_MAX * cosLat));
+
+        for (let loi = 0; loi < lonN; loi++) {
+          const lon    = (2 * Math.PI * loi / lonN + t * 1.2) % (2 * Math.PI);
+          const cosLon = Math.cos(lon);
+          if (cosLon <= 0) continue;
+
+          const sinLon = Math.sin(lon);
+          const x = cx + rowR * sinLon;
+
+          // Surface normal
+          const nx = cosLat * sinLon;
+          const ny = -sinLat;
+          const nz = cosLat * cosLon;
+
+          // Lighting
+          const dot = Math.max(0, -0.25*nx - 0.3*ny + 0.9*nz);
+          const b   = Math.floor(20 + 220 * dot);
+          const lf  = 0.1 + 0.9 * dot;
+
+          // Colour pattern (fixed per tile, rotates with ball)
+          const hash = (li * 7 + loi * 3) % 19;
+          let r, g, bl;
+          if      (hash === 0)  { r=255; g=100; bl=210; }  // pink
+          else if (hash === 5)  { r=80;  g=230; bl=255; }  // cyan
+          else if (hash === 10) { r=255; g=255; bl=60;  }  // yellow
+          else if (hash === 15) { r=180; g=80;  bl=255; }  // purple
+          else                  { r=b;   g=b;   bl=b;   }  // silver
+
+          ctx.fillStyle = `rgb(${Math.floor(r*lf)},${Math.floor(g*lf)},${Math.floor(bl*lf)})`;
+
+          const tileW = Math.max(2, Math.floor(2 * Math.PI * rowR / lonN * cosLon) - 1);
+          ctx.fillRect(Math.round(x - tileW/2), Math.round(y - tileH/2), tileW, tileH);
+        }
+      }
+
+      // Specular highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.92)';
+      ctx.beginPath();
+      ctx.arc(cx - BALL_R*0.28, cy - BALL_R*0.28, BALL_R*0.09, 0, 2*Math.PI);
+      ctx.fill();
+    }
+
+    // ---- Disco state ----
+    let discoOn       = false;
+    let audioCtx      = null;
+    let beatIntervalId  = null;
+    let colorIntervalId = null;
+    let animId        = null;
+    let discoStartTime  = null;
+    let beatStep      = 0;
+    let colorStep     = 0;
+    const discoColors = ['#ff6ec7', '#6ef9ff', '#f9ff6e'];
+
+    // ---- Beat ----
     function kick(ctx, time) {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
       osc.connect(gain); gain.connect(ctx.destination);
       osc.frequency.setValueAtTime(150, time);
       osc.frequency.exponentialRampToValueAtTime(0.001, time + 0.4);
@@ -186,91 +198,109 @@
     }
 
     function hihat(ctx, time, accent) {
-      const bufferSize = ctx.sampleRate * 0.05;
-      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-      const source = ctx.createBufferSource();
-      source.buffer = buffer;
-      const gain = ctx.createGain();
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'highpass'; filter.frequency.value = 8000;
-      source.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+      const bufSize = ctx.sampleRate * 0.05;
+      const buf  = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) data[i] = Math.random()*2-1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const gain = ctx.createGain(), filt = ctx.createBiquadFilter();
+      filt.type = 'highpass'; filt.frequency.value = 8000;
+      src.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
       gain.gain.setValueAtTime(accent ? 0.4 : 0.15, time);
       gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      source.start(time); source.stop(time + 0.05);
+      src.start(time); src.stop(time + 0.05);
     }
 
     function stab(ctx, time, freq) {
-      const osc = ctx.createOscillator();
-      const osc2 = ctx.createOscillator();
+      const o1 = ctx.createOscillator(), o2 = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = 'sawtooth';
-      osc2.type = 'square';
-      osc.frequency.setValueAtTime(freq, time);
-      osc2.frequency.setValueAtTime(freq * 1.01, time);
-      osc.connect(gain);
-      osc2.connect(gain);
-      gain.connect(ctx.destination);
+      o1.type = 'sawtooth'; o2.type = 'square';
+      o1.frequency.setValueAtTime(freq, time);
+      o2.frequency.setValueAtTime(freq * 1.01, time);
+      o1.connect(gain); o2.connect(gain); gain.connect(ctx.destination);
       gain.gain.setValueAtTime(0.5, time);
       gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
-      osc.start(time); osc.stop(time + 0.08);
-      osc2.start(time); osc2.stop(time + 0.08);
+      o1.start(time); o1.stop(time + 0.08);
+      o2.start(time); o2.stop(time + 0.08);
     }
 
-    const bpm = 175;
-    const stepTime = 60 / bpm / 2;
-    const kickPattern  = [1,0,0,1, 1,0,1,0, 1,0,0,1, 1,0,1,0];
-    const hihatPattern = [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1];
-    const hihatAccent  = [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0];
-    const stabPattern  = [1,0,1,0, 0,1,0,1, 1,0,0,1, 0,1,1,0];
-    const stabFreqs    = [110, 146, 98, 130, 87];
+    const bpm        = 175;
+    const stepTime   = 60 / bpm / 2;
+    const kickPat    = [1,0,0,1, 1,0,1,0, 1,0,0,1, 1,0,1,0];
+    const hihatPat   = [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1];
+    const accentPat  = [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0];
+    const stabPat    = [1,0,1,0, 0,1,0,1, 1,0,0,1, 0,1,1,0];
+    const stabFreqs  = [110, 146, 98, 130, 87];
 
     function scheduleBeat() {
       const now = audioCtx.currentTime;
-      if (kickPattern[step])  kick(audioCtx, now);
-      if (hihatPattern[step]) hihat(audioCtx, now, hihatAccent[step]);
-      if (stabPattern[step])  stab(audioCtx, now, stabFreqs[step % stabFreqs.length]);
-      step = (step + 1) % 16;
+      if (kickPat[beatStep])   kick(audioCtx, now);
+      if (hihatPat[beatStep])  hihat(audioCtx, now, accentPat[beatStep]);
+      if (stabPat[beatStep])   stab(audioCtx, now, stabFreqs[beatStep % stabFreqs.length]);
+      beatStep = (beatStep + 1) % 16;
     }
 
+    // ---- Toggle ----
     function toggleDisco() {
-      const btn = document.getElementById('disco-btn');
-      const globe = document.getElementById('disco-globe');
+      const btn    = document.getElementById('disco-btn');
+      const canvas = document.getElementById('disco-canvas');
 
       if (!discoOn) {
         discoOn = true;
         btn.textContent = '⏹ Stop Disco';
 
-        // Globe
-        globe.style.display = 'block';
-        globe.style.animation = 'none';
-        void globe.offsetWidth;
-        globe.style.animation = 'globeDrop 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards';
+        // Set up canvas
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvas.style.display = 'block';
+        discoStartTime = null;
+
+        // Animation loop
+        function animate(ts) {
+          if (!discoStartTime) discoStartTime = ts;
+          const elapsed = (ts - discoStartTime) / 1000;
+          const ctx2 = canvas.getContext('2d');
+          ctx2.clearRect(0, 0, canvas.width, canvas.height);
+
+          const cx = canvas.width / 2;
+          const progress = Math.min(1, elapsed / 1.1);
+          const ballY = -BALL_R + (BALL_TARGET_Y + BALL_R) * easeOutBounce(progress);
+
+          // Wire from ceiling
+          ctx2.strokeStyle = 'rgba(160,160,160,0.85)';
+          ctx2.lineWidth = 1.5;
+          ctx2.beginPath();
+          ctx2.moveTo(cx, 0);
+          ctx2.lineTo(cx, Math.max(0, ballY - BALL_R));
+          ctx2.stroke();
+
+          // Ball
+          drawBall(ctx2, cx, ballY, elapsed);
+          animId = requestAnimationFrame(animate);
+        }
+        animId = requestAnimationFrame(animate);
 
         // Colors
         colorStep = 0;
-        cycleDiscoColor();
-        colorInterval = setInterval(cycleDiscoColor, 1000);
+        document.body.style.background = discoColors[0];
+        colorIntervalId = setInterval(() => {
+          colorStep = (colorStep + 1) % discoColors.length;
+          document.body.style.background = discoColors[colorStep];
+        }, 1000);
 
         // Beat
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        step = 0;
-        beatInterval = setInterval(scheduleBeat, stepTime * 1000);
+        beatStep = 0;
+        beatIntervalId = setInterval(scheduleBeat, stepTime * 1000);
 
       } else {
         discoOn = false;
         btn.textContent = '🪩 Disco Mode';
-
-        // Hide globe
-        globe.style.display = 'none';
-
-        // Stop colors
-        clearInterval(colorInterval);
+        cancelAnimationFrame(animId);
+        canvas.style.display = 'none';
+        clearInterval(colorIntervalId);
+        clearInterval(beatIntervalId);
         document.body.style.background = '#F5DFA0';
-
-        // Stop beat
-        clearInterval(beatInterval);
         audioCtx.close();
       }
     }
