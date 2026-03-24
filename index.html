@@ -14,7 +14,7 @@
       max-width: 680px;
       padding: 0;
       line-height: 1;
-      transition: background 0.4s ease;
+      transition: background 0.2s ease;
     }
     h1, h2 { font-family: 'Carlito'; color: #8B4513; }
     h1 { font-size: 2rem; margin-bottom: 0.1rem; }
@@ -42,8 +42,6 @@
       margin-top: 1rem; font-size: 0.85rem; color: black;
       border-top: 1px solid black; padding-top: 0.3rem;
     }
-
-    /* Disco button */
     .disco-btn {
       margin-top: 1rem;
       font-family: 'Times New Roman', serif;
@@ -74,63 +72,40 @@
       z-index: 9999;
       animation: globeDrop 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
-
-    /* Sparkle tiles on globe */
     #disco-globe::before {
       content: '';
       position: absolute;
       inset: 0;
       border-radius: 50%;
       background:
-        repeating-linear-gradient(
-          0deg,
-          transparent,
-          transparent 8px,
-          rgba(255,255,255,0.15) 8px,
-          rgba(255,255,255,0.15) 9px
-        ),
-        repeating-linear-gradient(
-          90deg,
-          transparent,
-          transparent 8px,
-          rgba(255,255,255,0.15) 8px,
-          rgba(255,255,255,0.15) 9px
-        );
-      border-radius: 50%;
+        repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(255,255,255,0.15) 8px, rgba(255,255,255,0.15) 9px),
+        repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(255,255,255,0.15) 8px, rgba(255,255,255,0.15) 9px);
       animation: globeSpin 2s linear infinite;
     }
-
-    /* Light beams */
     #disco-globe::after {
       content: '';
       position: absolute;
       inset: -30px;
       border-radius: 50%;
       background: conic-gradient(
-        rgba(255, 0, 200, 0.3) 0deg,
-        transparent 30deg,
-        rgba(0, 200, 255, 0.3) 90deg,
-        transparent 120deg,
-        rgba(255, 255, 0, 0.3) 180deg,
-        transparent 210deg,
+        rgba(255, 0, 200, 0.3) 0deg, transparent 30deg,
+        rgba(0, 200, 255, 0.3) 90deg, transparent 120deg,
+        rgba(255, 255, 0, 0.3) 180deg, transparent 210deg,
         rgba(255, 0, 200, 0.3) 360deg
       );
       animation: beamSpin 1.5s linear infinite;
       z-index: -1;
     }
-
     @keyframes globeDrop {
       0%   { top: -120px; opacity: 0; }
       60%  { top: 45%; opacity: 1; }
       75%  { top: 42%; }
       100% { top: 44%; opacity: 1; }
     }
-
     @keyframes globeSpin {
       from { transform: rotate(0deg); }
       to   { transform: rotate(360deg); }
     }
-
     @keyframes beamSpin {
       from { transform: rotate(0deg); }
       to   { transform: rotate(360deg); }
@@ -228,22 +203,28 @@
 
     function stab(ctx, time, freq) {
       const osc = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sawtooth';
+      osc2.type = 'square';
       osc.frequency.setValueAtTime(freq, time);
-      osc.connect(gain); gain.connect(ctx.destination);
-      gain.gain.setValueAtTime(0.3, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
-      osc.start(time); osc.stop(time + 0.1);
+      osc2.frequency.setValueAtTime(freq * 1.01, time);
+      osc.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.5, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
+      osc.start(time); osc.stop(time + 0.08);
+      osc2.start(time); osc2.stop(time + 0.08);
     }
 
-    const bpm = 138;
+    const bpm = 175;
     const stepTime = 60 / bpm / 2;
-    const kickPattern  = [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0];
+    const kickPattern  = [1,0,0,1, 1,0,1,0, 1,0,0,1, 1,0,1,0];
     const hihatPattern = [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1];
-    const hihatAccent  = [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0];
-    const stabPattern  = [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,1];
-    const stabFreqs    = [220, 165, 196];
+    const hihatAccent  = [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0];
+    const stabPattern  = [1,0,1,0, 0,1,0,1, 1,0,0,1, 0,1,1,0];
+    const stabFreqs    = [110, 146, 98, 130, 87];
 
     function scheduleBeat() {
       const now = audioCtx.currentTime;
@@ -258,28 +239,26 @@
       const globe = document.getElementById('disco-globe');
 
       if (!discoOn) {
-        // Start disco
         discoOn = true;
         btn.textContent = '⏹ Stop Disco';
 
-        // Show globe with animation
+        // Globe
         globe.style.display = 'block';
         globe.style.animation = 'none';
-        void globe.offsetWidth; // force reflow
+        void globe.offsetWidth;
         globe.style.animation = 'globeDrop 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards';
 
-        // Start colors
+        // Colors
         colorStep = 0;
         cycleDiscoColor();
         colorInterval = setInterval(cycleDiscoColor, 1000);
 
-        // Start beat
+        // Beat
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         step = 0;
         beatInterval = setInterval(scheduleBeat, stepTime * 1000);
 
       } else {
-        // Stop disco
         discoOn = false;
         btn.textContent = '🪩 Disco Mode';
 
