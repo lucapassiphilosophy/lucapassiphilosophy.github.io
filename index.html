@@ -1,157 +1,112 @@
-body {
-font-family: 'Times New Roman', Times, serif;
-color: black;
-      background: #F5C842;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>L.A. Passi</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      color: black;
       background: #F5DFA0;
-margin: 20px auto;
-max-width: 680px;
-padding: 0;
-@@ -64,18 +64,6 @@
-border-top: 1px solid black;
-padding-top: 0.3rem;
-}
-    .btn {
-      margin-top: 1rem;
-      margin-right: 0.5rem;
-      font-family: 'Times New Roman', serif;
-      background: none;
-      border: 1px solid #8B4513;
-      color: #8B4513;
-      padding: 4px 10px;
-      cursor: pointer;
-      font-size: 0.85rem;
+      margin: 20px auto;
+      max-width: 680px;
+      padding: 0;
+      line-height: 1;
     }
-    .btn:hover { background: #8B4513; color: white; }
-</style>
+    h1, h2 {
+      font-family: 'Carlito';
+      color: #8B4513;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.1rem;
+    }
+    h2 {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      margin-bottom: 0.2rem;
+      border-bottom: 1px solid black;
+    }
+    p { margin-bottom: 0.3rem; }
+    a { color: #CC0000; text-decoration: underline; }
+    a:visited { color: #880000; }
+    a:hover { color: #FF0000; }
+    ul { margin: 0.2rem 0 0.3rem 1.2rem; }
+    ul li { margin-bottom: 0.1rem; }
+    hr { border: none; border-top: 1px solid black; margin: 0.8rem 0; }
+    .subtitle { font-style: italic; margin-bottom: 0.3rem; }
+    .abstract-toggle {
+      font-size: 0.9rem;
+      color: #CC0000;
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: 'EB Garamond', serif;
+    }
+    .abstract-toggle:hover { color: #FF0000; }
+    .abstract {
+      display: none;
+      margin-top: 0.3rem;
+      margin-bottom: 0.3rem;
+      padding-left: 1rem;
+      border-left: 2px solid #CC0000;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    footer {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: black;
+      border-top: 1px solid black;
+      padding-top: 0.3rem;
+    }
+  </style>
 </head>
 <body>
-@@ -105,46 +93,9 @@ <h2>Contact</h2>
-<p>Email: luca_passi@berkeley.edu</p>
-<p><a href="https://philpeople.org/profiles/luca-alberto-passi" target="_blank">PhilPeople</a></p>
 
-  <div style="margin-top: 1rem;">
-    <button id="beat-btn" class="btn" onclick="toggleBeat()">▶ Play Beat</button>
-    <button id="fasten-btn" class="btn" onclick="fastenColors()">⚡ Fasten Color Change</button>
+  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+    <div><h1>Luca Passi</h1></div>
+    <img src="jpegluca.jpeg" alt="Luca Passi" style="width: 120px; height: 120px; object-fit: cover; margin-left: 20px;" />
   </div>
 
-<footer>&copy; 2026 Luca Passi</footer>
+  <h2>About</h2>
+  <p>I'm a PhD student in Philosophy at UC Berkeley. My interests are mainly in moral theory.
+  I also have secondary interests in philosophy of language and normative decision theory.</p>
+  <p>Before coming to Berkeley, I studied in Pavia (BA), London, and Cambridge (MPhil).</p>
 
-<script>
-    // ---- Background color cycle ----
-    const colors = [
-      '#F5DFA0', '#F5C842', '#F0E0B0', '#E8C97A',
-      '#F7E8C8', '#DEB887', '#F0D090', '#E8D5A3',
-      '#C8A96E', '#FAF0DC',
-    ];
-    let current = 0;
-    function cycleBackground() {
-      document.body.style.background = colors[current];
-      current = (current + 1) % colors.length;
-    }
-    let colorInterval = setInterval(cycleBackground, 3000);
-    cycleBackground();
+  <h2>Work</h2>
+  <p>
+    2023. <em>Promising by Normative Assurance.</em> <em>The Philosophical Quarterly.</em>
+    [<a href="https://philpapers.org/rec/PASPBN" target="_blank">Preprint</a>]
+    [<a href="https://academic.oup.com/pq/article/73/4/1004/7222498" target="_blank">Published version</a>]
+  </p>
+  <p><button class="abstract-toggle" onclick="toggleAbstract()">Abstract ▸</button></p>
+  <div class="abstract" id="abstract-pna">
+    This paper develops a new theory of the morality of promissory obligations. T. M. Scanlon notoriously argued that promising consists in assuring the promisee that we will do something. I disagree. I argue that it is true that promising consists in assuring the promisee, but what the promisor gives to the promisee is not an assurance that they will do something, but that the normative situation is in a certain way.
+  </div>
 
-    // ---- Fasten / slow color change ----
-    let fastened = false;
-    function fastenColors() {
-      const btn = document.getElementById('fasten-btn');
-      if (!fastened) {
-        clearInterval(colorInterval);
-        colorInterval = setInterval(cycleBackground, 500);
-        fastened = true;
-        btn.textContent = '⏹ Slow Color Change';
+  <h2>Contact</h2>
+  <p>Email: luca_passi@berkeley.edu</p>
+  <p><a href="https://philpeople.org/profiles/luca-alberto-passi" target="_blank">PhilPeople</a></p>
+
+  <footer>&copy; 2026 Luca Passi</footer>
+
+  <script>
+    function toggleAbstract() {
+      var abs = document.getElementById('abstract-pna');
+      var btn = document.querySelector('.abstract-toggle');
+      if (abs.style.display === 'block') {
+        abs.style.display = 'none';
+        btn.textContent = 'Abstract ▸';
       } else {
-        clearInterval(colorInterval);
-        colorInterval = setInterval(cycleBackground, 3000);
-        fastened = false;
-        btn.textContent = '⚡ Fasten Color Change';
+        abs.style.display = 'block';
+        btn.textContent = 'Abstract ▾';
       }
     }
-
-    // ---- Abstract toggle ----
-function toggleAbstract() {
-var abs = document.getElementById('abstract-pna');
-var btn = document.querySelector('.abstract-toggle');
-@@ -156,82 +107,6 @@ <h2>Contact</h2>
-btn.textContent = 'Abstract ▾';
-}
-}
-
-    // ---- Techno beat ----
-    let audioCtx = null;
-    let beatInterval = null;
-    let playing = false;
-    let step = 0;
-
-    function kick(ctx, time) {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.frequency.setValueAtTime(150, time);
-      osc.frequency.exponentialRampToValueAtTime(0.001, time + 0.4);
-      gain.gain.setValueAtTime(1, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.4);
-      osc.start(time); osc.stop(time + 0.4);
-    }
-
-    function hihat(ctx, time, accent) {
-      const bufferSize = ctx.sampleRate * 0.05;
-      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-      const source = ctx.createBufferSource();
-      source.buffer = buffer;
-      const gain = ctx.createGain();
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'highpass'; filter.frequency.value = 8000;
-      source.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
-      gain.gain.setValueAtTime(accent ? 0.4 : 0.15, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      source.start(time); source.stop(time + 0.05);
-    }
-
-    function stab(ctx, time, freq) {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(freq, time);
-      osc.connect(gain); gain.connect(ctx.destination);
-      gain.gain.setValueAtTime(0.3, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
-      osc.start(time); osc.stop(time + 0.1);
-    }
-
-    const bpm = 138;
-    const stepTime = 60 / bpm / 2;
-    const kickPattern  = [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0];
-    const hihatPattern = [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1];
-    const hihatAccent  = [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0];
-    const stabPattern  = [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,1];
-    const stabFreqs    = [220, 165, 196];
-
-    function scheduleBeat() {
-      const now = audioCtx.currentTime;
-      if (kickPattern[step])  kick(audioCtx, now);
-      if (hihatPattern[step]) hihat(audioCtx, now, hihatAccent[step]);
-      if (stabPattern[step])  stab(audioCtx, now, stabFreqs[step % stabFreqs.length]);
-      step = (step + 1) % 16;
-    }
-
-    function toggleBeat() {
-      const btn = document.getElementById('beat-btn');
-      if (!playing) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        step = 0;
-        beatInterval = setInterval(scheduleBeat, stepTime * 1000);
-        playing = true;
-        btn.textContent = '⏹ Stop Beat';
-      } else {
-        clearInterval(beatInterval);
-        audioCtx.close();
-        playing = false;
-        btn.textContent = '▶ Play Beat';
-      }
-    }
-</script>
+  </script>
 </body>
 </html>
