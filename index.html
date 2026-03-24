@@ -1,47 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>L.A. Passi</title>
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Times New Roman', Times, serif;
-      color: black;
+body {
+font-family: 'Times New Roman', Times, serif;
+color: black;
+      background: #F5C842;
       background: #F5DFA0;
-      margin: 20px auto;
-      max-width: 680px;
-      padding: 0;
-      line-height: 1;
-      transition: background 0.2s ease;
-    }
-    h1, h2 { font-family: 'Carlito'; color: #8B4513; }
-    h1 { font-size: 2rem; margin-bottom: 0.1rem; }
-    h2 { font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.2rem; border-bottom: 1px solid black; }
-    p { margin-bottom: 0.3rem; }
-    a { color: #CC0000; text-decoration: underline; }
-    a:visited { color: #880000; }
-    a:hover { color: #FF0000; }
-    ul { margin: 0.2rem 0 0.3rem 1.2rem; }
-    ul li { margin-bottom: 0.1rem; }
-    .abstract-toggle {
-      font-size: 0.9rem; color: #CC0000; cursor: pointer;
-      text-decoration: underline; background: none; border: none;
-      padding: 0; font-family: 'EB Garamond', serif;
-    }
-    .abstract-toggle:hover { color: #FF0000; }
-    .abstract {
-      display: none; margin-top: 0.3rem; margin-bottom: 0.3rem;
-      padding-left: 1rem; border-left: 2px solid #CC0000;
-      font-size: 0.95rem; line-height: 1.4;
-    }
-    footer {
-      margin-top: 1rem; font-size: 0.85rem; color: black;
-      border-top: 1px solid black; padding-top: 0.3rem;
-    }
-    .disco-btn {
+margin: 20px auto;
+max-width: 680px;
+padding: 0;
+@@ -64,18 +64,6 @@
+border-top: 1px solid black;
+padding-top: 0.3rem;
+}
+    .btn {
       margin-top: 1rem;
+      margin-right: 0.5rem;
       font-family: 'Times New Roman', serif;
       background: none;
       border: 1px solid #8B4513;
@@ -50,145 +21,71 @@
       cursor: pointer;
       font-size: 0.85rem;
     }
-    .disco-btn:hover { background: #8B4513; color: white; }
-    #disco-canvas {
-      position: fixed;
-      top: 0; left: 0;
-      pointer-events: none;
-      z-index: 9999;
-      display: none;
-    }
-  </style>
+    .btn:hover { background: #8B4513; color: white; }
+</style>
 </head>
 <body>
+@@ -105,46 +93,9 @@ <h2>Contact</h2>
+<p>Email: luca_passi@berkeley.edu</p>
+<p><a href="https://philpeople.org/profiles/luca-alberto-passi" target="_blank">PhilPeople</a></p>
 
-  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-    <div><h1>Luca Passi</h1></div>
-    <img src="jpegluca.jpeg" alt="Luca Passi" style="width: 120px; height: 120px; object-fit: cover; margin-left: 20px;" />
+  <div style="margin-top: 1rem;">
+    <button id="beat-btn" class="btn" onclick="toggleBeat()">▶ Play Beat</button>
+    <button id="fasten-btn" class="btn" onclick="fastenColors()">⚡ Fasten Color Change</button>
   </div>
 
-  <h2>About</h2>
-  <p>I'm a PhD student in Philosophy at UC Berkeley. My interests are mainly in moral theory.
-  I also have secondary interests in philosophy of language and normative decision theory.</p>
-  <p>Before coming to Berkeley, I studied in Pavia (BA), London, and Cambridge (MPhil).</p>
+<footer>&copy; 2026 Luca Passi</footer>
 
-  <h2>Work</h2>
-  <p>
-    2023. <em>Promising by Normative Assurance.</em> <em>The Philosophical Quarterly.</em>
-    [<a href="https://philpapers.org/rec/PASPBN" target="_blank">Preprint</a>]
-    [<a href="https://academic.oup.com/pq/article/73/4/1004/7222498" target="_blank">Published version</a>]
-  </p>
-  <p><button class="abstract-toggle" onclick="toggleAbstract()">Abstract ▸</button></p>
-  <div class="abstract" id="abstract-pna">
-    This paper develops a new theory of the morality of promissory obligations. T. M. Scanlon notoriously argued that promising consists in assuring the promisee that we will do something. I disagree. I argue that it is true that promising consists in assuring the promisee, but what the promisor gives to the promisee is not an assurance that they will do something, but that the normative situation is in a certain way.
-  </div>
+<script>
+    // ---- Background color cycle ----
+    const colors = [
+      '#F5DFA0', '#F5C842', '#F0E0B0', '#E8C97A',
+      '#F7E8C8', '#DEB887', '#F0D090', '#E8D5A3',
+      '#C8A96E', '#FAF0DC',
+    ];
+    let current = 0;
+    function cycleBackground() {
+      document.body.style.background = colors[current];
+      current = (current + 1) % colors.length;
+    }
+    let colorInterval = setInterval(cycleBackground, 3000);
+    cycleBackground();
 
-  <h2>Contact</h2>
-  <p>Email: luca_passi@berkeley.edu</p>
-  <p><a href="https://philpeople.org/profiles/luca-alberto-passi" target="_blank">PhilPeople</a></p>
-
-  <button id="disco-btn" class="disco-btn" onclick="toggleDisco()">🪩 Disco Mode</button>
-
-  <canvas id="disco-canvas"></canvas>
-
-  <footer>&copy; 2026 Luca Passi</footer>
-
-  <script>
-    // ---- Abstract toggle ----
-    function toggleAbstract() {
-      var abs = document.getElementById('abstract-pna');
-      var btn = document.querySelector('.abstract-toggle');
-      if (abs.style.display === 'block') {
-        abs.style.display = 'none';
-        btn.textContent = 'Abstract ▸';
+    // ---- Fasten / slow color change ----
+    let fastened = false;
+    function fastenColors() {
+      const btn = document.getElementById('fasten-btn');
+      if (!fastened) {
+        clearInterval(colorInterval);
+        colorInterval = setInterval(cycleBackground, 500);
+        fastened = true;
+        btn.textContent = '⏹ Slow Color Change';
       } else {
-        abs.style.display = 'block';
-        btn.textContent = 'Abstract ▾';
+        clearInterval(colorInterval);
+        colorInterval = setInterval(cycleBackground, 3000);
+        fastened = false;
+        btn.textContent = '⚡ Fasten Color Change';
       }
     }
 
-    // ---- Pixel disco ball ----
-    const BALL_R = 55;
-    const LAT_N  = 10;
-    const LON_MAX = 12;
-    const BALL_TARGET_Y = 140;
+    // ---- Abstract toggle ----
+function toggleAbstract() {
+var abs = document.getElementById('abstract-pna');
+var btn = document.querySelector('.abstract-toggle');
+@@ -156,82 +107,6 @@ <h2>Contact</h2>
+btn.textContent = 'Abstract ▾';
+}
+}
 
-    function easeOutBounce(t) {
-      const n1 = 7.5625, d1 = 2.75;
-      if (t < 1/d1)       return n1*t*t;
-      if (t < 2/d1)       { t -= 1.5/d1;  return n1*t*t + 0.75; }
-      if (t < 2.5/d1)     { t -= 2.25/d1; return n1*t*t + 0.9375; }
-      t -= 2.625/d1;      return n1*t*t + 0.984375;
-    }
+    // ---- Techno beat ----
+    let audioCtx = null;
+    let beatInterval = null;
+    let playing = false;
+    let step = 0;
 
-    function drawBall(ctx, cx, cy, t) {
-      const tileH = Math.max(2, Math.floor(Math.PI * BALL_R / LAT_N) - 1);
-
-      for (let li = 0; li < LAT_N; li++) {
-        const lat    = -Math.PI/2 + (li + 0.5) * Math.PI / LAT_N;
-        const cosLat = Math.cos(lat);
-        const sinLat = Math.sin(lat);
-        const rowR   = BALL_R * cosLat;
-        const y      = cy + BALL_R * sinLat;
-        if (rowR < 2) continue;
-
-        const lonN = Math.max(2, Math.round(LON_MAX * cosLat));
-
-        for (let loi = 0; loi < lonN; loi++) {
-          const lon    = (2 * Math.PI * loi / lonN + t * 1.2) % (2 * Math.PI);
-          const cosLon = Math.cos(lon);
-          if (cosLon <= 0) continue;
-
-          const sinLon = Math.sin(lon);
-          const x = cx + rowR * sinLon;
-
-          // Surface normal
-          const nx = cosLat * sinLon;
-          const ny = -sinLat;
-          const nz = cosLat * cosLon;
-
-          // Lighting
-          const dot = Math.max(0, -0.25*nx - 0.3*ny + 0.9*nz);
-          const b   = Math.floor(20 + 220 * dot);
-          const lf  = 0.1 + 0.9 * dot;
-
-          // Colour pattern (fixed per tile, rotates with ball)
-          const hash = (li * 7 + loi * 3) % 19;
-          let r, g, bl;
-          if      (hash === 0)  { r=255; g=100; bl=210; }  // pink
-          else if (hash === 5)  { r=80;  g=230; bl=255; }  // cyan
-          else if (hash === 10) { r=255; g=255; bl=60;  }  // yellow
-          else if (hash === 15) { r=180; g=80;  bl=255; }  // purple
-          else                  { r=b;   g=b;   bl=b;   }  // silver
-
-          ctx.fillStyle = `rgb(${Math.floor(r*lf)},${Math.floor(g*lf)},${Math.floor(bl*lf)})`;
-
-          const tileW = Math.max(2, Math.floor(2 * Math.PI * rowR / lonN * cosLon) - 1);
-          ctx.fillRect(Math.round(x - tileW/2), Math.round(y - tileH/2), tileW, tileH);
-        }
-      }
-
-      // Specular highlight
-      ctx.fillStyle = 'rgba(255,255,255,0.92)';
-      ctx.beginPath();
-      ctx.arc(cx - BALL_R*0.28, cy - BALL_R*0.28, BALL_R*0.09, 0, 2*Math.PI);
-      ctx.fill();
-    }
-
-    // ---- Disco state ----
-    let discoOn       = false;
-    let audioCtx      = null;
-    let beatIntervalId  = null;
-    let colorIntervalId = null;
-    let animId        = null;
-    let discoStartTime  = null;
-    let beatStep      = 0;
-    let colorStep     = 0;
-    const discoColors = ['#ff6ec7', '#6ef9ff', '#f9ff6e'];
-
-    // ---- Beat ----
     function kick(ctx, time) {
-      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
       osc.connect(gain); gain.connect(ctx.destination);
       osc.frequency.setValueAtTime(150, time);
       osc.frequency.exponentialRampToValueAtTime(0.001, time + 0.4);
@@ -198,112 +95,63 @@
     }
 
     function hihat(ctx, time, accent) {
-      const bufSize = ctx.sampleRate * 0.05;
-      const buf  = ctx.createBuffer(1, bufSize, ctx.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < bufSize; i++) data[i] = Math.random()*2-1;
-      const src = ctx.createBufferSource(); src.buffer = buf;
-      const gain = ctx.createGain(), filt = ctx.createBiquadFilter();
-      filt.type = 'highpass'; filt.frequency.value = 8000;
-      src.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
+      const bufferSize = ctx.sampleRate * 0.05;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'highpass'; filter.frequency.value = 8000;
+      source.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
       gain.gain.setValueAtTime(accent ? 0.4 : 0.15, time);
       gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-      src.start(time); src.stop(time + 0.05);
+      source.start(time); source.stop(time + 0.05);
     }
 
     function stab(ctx, time, freq) {
-      const o1 = ctx.createOscillator(), o2 = ctx.createOscillator();
+      const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      o1.type = 'sawtooth'; o2.type = 'square';
-      o1.frequency.setValueAtTime(freq, time);
-      o2.frequency.setValueAtTime(freq * 1.01, time);
-      o1.connect(gain); o2.connect(gain); gain.connect(ctx.destination);
-      gain.gain.setValueAtTime(0.5, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
-      o1.start(time); o1.stop(time + 0.08);
-      o2.start(time); o2.stop(time + 0.08);
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, time);
+      osc.connect(gain); gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.3, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+      osc.start(time); osc.stop(time + 0.1);
     }
 
-    const bpm        = 175;
-    const stepTime   = 60 / bpm / 2;
-    const kickPat    = [1,0,0,1, 1,0,1,0, 1,0,0,1, 1,0,1,0];
-    const hihatPat   = [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1];
-    const accentPat  = [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0];
-    const stabPat    = [1,0,1,0, 0,1,0,1, 1,0,0,1, 0,1,1,0];
-    const stabFreqs  = [110, 146, 98, 130, 87];
+    const bpm = 138;
+    const stepTime = 60 / bpm / 2;
+    const kickPattern  = [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0];
+    const hihatPattern = [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1];
+    const hihatAccent  = [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0];
+    const stabPattern  = [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,1];
+    const stabFreqs    = [220, 165, 196];
 
     function scheduleBeat() {
       const now = audioCtx.currentTime;
-      if (kickPat[beatStep])   kick(audioCtx, now);
-      if (hihatPat[beatStep])  hihat(audioCtx, now, accentPat[beatStep]);
-      if (stabPat[beatStep])   stab(audioCtx, now, stabFreqs[beatStep % stabFreqs.length]);
-      beatStep = (beatStep + 1) % 16;
+      if (kickPattern[step])  kick(audioCtx, now);
+      if (hihatPattern[step]) hihat(audioCtx, now, hihatAccent[step]);
+      if (stabPattern[step])  stab(audioCtx, now, stabFreqs[step % stabFreqs.length]);
+      step = (step + 1) % 16;
     }
 
-    // ---- Toggle ----
-    function toggleDisco() {
-      const btn    = document.getElementById('disco-btn');
-      const canvas = document.getElementById('disco-canvas');
-
-      if (!discoOn) {
-        discoOn = true;
-        btn.textContent = '⏹ Stop Disco';
-
-        // Set up canvas
-        canvas.width  = window.innerWidth;
-        canvas.height = window.innerHeight;
-        canvas.style.display = 'block';
-        discoStartTime = null;
-
-        // Animation loop
-        function animate(ts) {
-          if (!discoStartTime) discoStartTime = ts;
-          const elapsed = (ts - discoStartTime) / 1000;
-          const ctx2 = canvas.getContext('2d');
-          ctx2.clearRect(0, 0, canvas.width, canvas.height);
-
-          const cx = canvas.width / 2;
-          const progress = Math.min(1, elapsed / 1.1);
-          const ballY = -BALL_R + (BALL_TARGET_Y + BALL_R) * easeOutBounce(progress);
-
-          // Wire from ceiling
-          ctx2.strokeStyle = 'rgba(160,160,160,0.85)';
-          ctx2.lineWidth = 1.5;
-          ctx2.beginPath();
-          ctx2.moveTo(cx, 0);
-          ctx2.lineTo(cx, Math.max(0, ballY - BALL_R));
-          ctx2.stroke();
-
-          // Ball
-          drawBall(ctx2, cx, ballY, elapsed);
-          animId = requestAnimationFrame(animate);
-        }
-        animId = requestAnimationFrame(animate);
-
-        // Colors
-        colorStep = 0;
-        document.body.style.background = discoColors[0];
-        colorIntervalId = setInterval(() => {
-          colorStep = (colorStep + 1) % discoColors.length;
-          document.body.style.background = discoColors[colorStep];
-        }, 1000);
-
-        // Beat
+    function toggleBeat() {
+      const btn = document.getElementById('beat-btn');
+      if (!playing) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        beatStep = 0;
-        beatIntervalId = setInterval(scheduleBeat, stepTime * 1000);
-
+        step = 0;
+        beatInterval = setInterval(scheduleBeat, stepTime * 1000);
+        playing = true;
+        btn.textContent = '⏹ Stop Beat';
       } else {
-        discoOn = false;
-        btn.textContent = '🪩 Disco Mode';
-        cancelAnimationFrame(animId);
-        canvas.style.display = 'none';
-        clearInterval(colorIntervalId);
-        clearInterval(beatIntervalId);
-        document.body.style.background = '#F5DFA0';
+        clearInterval(beatInterval);
         audioCtx.close();
+        playing = false;
+        btn.textContent = '▶ Play Beat';
       }
     }
-  </script>
+</script>
 </body>
 </html>
