@@ -9,7 +9,7 @@
     body {
       font-family: 'Times New Roman', Times, serif;
       color: black;
-      background: #F5DFA0;
+      background: #C8DFF0;
       margin: 20px auto;
       max-width: 680px;
       padding: 0;
@@ -35,6 +35,8 @@
       display: none; margin-top: 0.3rem; margin-bottom: 0.3rem;
       padding-left: 1rem; border-left: 2px solid #CC0000;
       font-size: 0.95rem; line-height: 1.4;
+      background: white;
+      padding: 0.5rem 0.5rem 0.5rem 1rem;
     }
     footer {
       margin-top: 1rem; font-size: 0.85rem; color: black;
@@ -58,13 +60,24 @@
       z-index: 9999;
       display: none;
     }
+
+    /* PowerPoint-style fly-in from the right */
+    @keyframes pptFlyIn {
+      0%   { transform: translateX(600px); opacity: 0; }
+      60%  { transform: translateX(-18px); opacity: 1; }
+      80%  { transform: translateX(8px); }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    #profile-pic {
+      animation: pptFlyIn 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
+    }
   </style>
 </head>
 <body>
 
   <div style="display: flex; justify-content: space-between; align-items: flex-start;">
     <div><h1>Luca Passi</h1></div>
-    <img src="jpegluca.jpeg" alt="Luca Passi" style="width: 120px; height: 120px; object-fit: cover; margin-left: 20px;" />
+    <img id="profile-pic" src="jpegluca.jpeg" alt="Luca Passi" style="width: 120px; height: 120px; object-fit: cover; margin-left: 20px;" />
   </div>
 
   <h2>About</h2>
@@ -78,7 +91,7 @@
     [<a href="https://philpapers.org/rec/PASPBN" target="_blank">Preprint</a>]
     [<a href="https://academic.oup.com/pq/article/73/4/1004/7222498" target="_blank">Published version</a>]
   </p>
-  <p><button class="abstract-toggle" onclick="toggleAbstract()">Abstract ▸</button></p>
+  <p><button class="abstract-toggle" onclick="toggleAbstract('abstract-pna', this)">Abstract ▸</button></p>
   <div class="abstract" id="abstract-pna">
     This paper develops a new theory of the morality of promissory obligations. T. M. Scanlon notoriously argued that promising consists in assuring the promisee that we will do something. I disagree. I argue that it is true that promising consists in assuring the promisee, but what the promisor gives to the promisee is not an assurance that they will do something, but that the normative situation is in a certain way.
   </div>
@@ -87,6 +100,18 @@
   <p>Email: luca_passi@berkeley.edu</p>
   <p><a href="https://philpeople.org/profiles/luca-alberto-passi" target="_blank">PhilPeople</a></p>
 
-  
+  <script>
+    function toggleAbstract(id, btn) {
+      const abstract = document.getElementById(id);
+      if (abstract.style.display === 'block') {
+        abstract.style.display = 'none';
+        btn.textContent = 'Abstract ▸';
+      } else {
+        abstract.style.display = 'block';
+        btn.textContent = 'Abstract ▾';
+      }
+    }
+  </script>
+
 </body>
 </html>
