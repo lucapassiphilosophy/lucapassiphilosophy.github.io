@@ -9,7 +9,7 @@
     body {
       font-family: 'Times New Roman', Times, serif;
       color: black;
-      background: #C8DFF0;
+      background: #FADCE6;
       margin: 20px auto;
       max-width: 680px;
       padding: 0;
@@ -78,6 +78,34 @@
     #profile-pic {
       animation: pptFlyIn 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
     }
+
+    /* Comic-style red button */
+    .comic-btn {
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-family: 'Comic Sans MS', 'Carlito', sans-serif;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #FFFFFF !important;
+      background: #FF2A2A;
+      text-decoration: none !important;
+      padding: 8px 22px;
+      border: 3px solid #000;
+      border-radius: 10px;
+      box-shadow: 4px 4px 0 #000;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
+      text-shadow: 1px 1px 0 #8B0000;
+    }
+    .comic-btn:hover {
+      background: #FF4D4D;
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 #000;
+    }
+    .comic-btn:active {
+      transform: translate(4px, 4px);
+      box-shadow: 0 0 0 #000;
+    }
   </style>
 </head>
 <body>
@@ -88,7 +116,7 @@
   </div>
 
   <h2>About</h2>
-  <p>I'm a PhD student in Philosophy at UC Berkeley. My interests are mainly in moral theory.
+  <p>I'm a PhD student in Philosophy at UC Berkeley. My interests are mainly in moral and political philosophy. 
   I also have secondary interests in philosophy of language and normative decision theory.</p>
   <p>Before coming to Berkeley, I studied in Pavia (BA), London, and Cambridge (MPhil).</p>
 
@@ -98,7 +126,7 @@
     [<a href="https://philpapers.org/rec/PASPBN" target="_blank">Preprint</a>]
     [<a href="https://academic.oup.com/pq/article/73/4/1004/7222498" target="_blank">Published version</a>]
   </p>
-  <p><button class="abstract-toggle" onclick="toggleAbstract('abstract-pna', this)">Abstract ▸</button></p>
+  <p><button class="abstract-toggle" onclick="toggleAbstract('abstract-pna', this)">Abstract &#9656;</button></p>
   <div class="abstract" id="abstract-pna">
     This paper develops a new theory of the morality of promissory obligations. T. M. Scanlon notoriously argued that promising consists in assuring the promisee that we will do something. I disagree. I argue that it is true that promising consists in assuring the promisee, but what the promisor gives to the promisee is not an assurance that they will do something, but that the normative situation is in a certain way.
   </div>
@@ -106,8 +134,9 @@
   <h2>Work in Progress</h2>
   <ol start="1">
     <li>A paper on projects &ndash;&ndash; and how they matter morally.</li>
-    <li>A paper on consent and control.</li>
     <li>A paper on second-order interests, rights and time.</li>
+    <li>A paper on consent.</li>
+    <li>A paper on second-order interests and conventions.</li>
     <li>A paper &ldquo;against&rdquo; normative powers.</li>
   </ol>
 
@@ -117,9 +146,19 @@
     <li>A paper on risk and cost-free information.</li>
   </ol>
 
+  <h2>Hobbies</h2>
+  <ol start="5">
+    <li>I've been trying to get into birdwatching since 2020.</li>
+    <li>Design.</li>
+  </ol>
+
   <h2>Contact</h2>
   <p>Email: luca_passi@berkeley.edu</p>
   <p><a href="https://philpeople.org/profiles/luca-alberto-passi" target="_blank">PhilPeople</a></p>
+
+  <p>
+    <a href="https://en.wikipedia.org/wiki/Button" target="_blank" class="comic-btn">Button</a>
+  </p>
 
   <canvas id="confetti-canvas"></canvas>
 
@@ -233,10 +272,10 @@
       const abstract = document.getElementById(id);
       if (abstract.style.display === 'block') {
         abstract.style.display = 'none';
-        btn.textContent = 'Abstract ▸';
+        btn.textContent = 'Abstract \u25B8';
       } else {
         abstract.style.display = 'block';
-        btn.textContent = 'Abstract ▾';
+        btn.textContent = 'Abstract \u25BE';
         launchConfetti(btn);
       }
     }
