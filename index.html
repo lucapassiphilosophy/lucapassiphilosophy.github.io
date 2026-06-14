@@ -4,19 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>L.A. Passi</title>
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Times New Roman', Times, serif;
+      font-family: 'Carlito', 'Calibri', 'Helvetica Neue', Arial, sans-serif;
       color: black;
-      background: #C8DFF0;
+      background: rgba(255, 255, 255, 0.6);
       margin: 20px auto;
       max-width: 680px;
       padding: 0;
       line-height: 1;
       transition: background 0.2s ease;
     }
-    h1, h2 { font-family: 'Carlito'; color: #8B4513; }
+    h1, h2 { font-family: 'Carlito', 'Calibri', sans-serif; color: #8B4513; }
     h1 { font-size: 2rem; margin-bottom: 0.1rem; }
     h2 { font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.2rem; border-bottom: 1px solid black; }
     p { margin-bottom: 0.3rem; }
@@ -28,14 +28,14 @@
     .abstract-toggle {
       font-size: 0.9rem; color: #CC0000; cursor: pointer;
       text-decoration: underline; background: none; border: none;
-      padding: 0; font-family: 'EB Garamond', serif;
+      padding: 0; font-family: 'Carlito', 'Calibri', sans-serif;
     }
     .abstract-toggle:hover { color: #FF0000; }
     .abstract {
       display: none; margin-top: 0.3rem; margin-bottom: 0.3rem;
       padding-left: 1rem; border-left: 2px solid #CC0000;
       font-size: 0.95rem; line-height: 1.4;
-      background: white;
+      background: rgba(255, 255, 255, 0.75);
       padding: 0.5rem 0.5rem 0.5rem 1rem;
     }
     footer {
@@ -44,7 +44,7 @@
     }
     .disco-btn {
       margin-top: 1rem;
-      font-family: 'Times New Roman', serif;
+      font-family: 'Carlito', 'Calibri', sans-serif;
       background: none;
       border: 1px solid #8B4513;
       color: #8B4513;
@@ -67,7 +67,6 @@
       pointer-events: none;
       z-index: 9998;
     }
-
     /* PowerPoint-style fly-in from the right */
     @keyframes pptFlyIn {
       0%   { transform: translateX(600px); opacity: 0; }
@@ -81,17 +80,14 @@
   </style>
 </head>
 <body>
-
   <div style="display: flex; justify-content: space-between; align-items: flex-start;">
     <div><h1>Luca Passi</h1></div>
     <img id="profile-pic" src="jpegluca.jpeg" alt="Luca Passi" style="width: 120px; height: 120px; object-fit: cover; margin-left: 20px;" />
   </div>
-
   <h2>About</h2>
   <p>I'm a PhD student in Philosophy at UC Berkeley. My interests are mainly in moral and political philosophy. 
   I also have secondary interests in philosophy of language and normative decision theory.</p>
   <p>Before coming to Berkeley, I studied in Pavia (BA), London, and Cambridge (MPhil).</p>
-
   <h2>Work</h2>
   <p>
     2023. <em>Promising by Normative Assurance.</em> <em>The Philosophical Quarterly.</em>
@@ -102,7 +98,6 @@
   <div class="abstract" id="abstract-pna">
     This paper develops a new theory of the morality of promissory obligations. T. M. Scanlon notoriously argued that promising consists in assuring the promisee that we will do something. I disagree. I argue that it is true that promising consists in assuring the promisee, but what the promisor gives to the promisee is not an assurance that they will do something, but that the normative situation is in a certain way.
   </div>
-
   <h2>Work in Progress</h2>
   <ol start="1">
     <li>A paper on projects &ndash;&ndash; and how they matter morally.</li>
@@ -111,32 +106,25 @@
     <li>A paper on second-order interests and conventions.</li>
     <li>A paper &ldquo;against&rdquo; normative powers.</li>
   </ol>
-
   <h2>Contact</h2>
   <p>Email: luca_passi@berkeley.edu</p>
   <p><a href="https://philpeople.org/profiles/luca-alberto-passi" target="_blank">PhilPeople</a></p>
-
   <canvas id="confetti-canvas"></canvas>
-
   <script>
     // ── Confetti & stars burst ──────────────────────────────────────────────
     const canvas  = document.getElementById('confetti-canvas');
     const ctx     = canvas.getContext('2d');
     let particles = [];
     let animId    = null;
-
     const COLORS  = ['#CC0000','#FFD700','#8B4513','#4169E1','#228B22','#FF69B4','#FF8C00'];
     const SHAPES  = ['rect', 'star'];
-
     function resize() {
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
     }
     window.addEventListener('resize', resize);
     resize();
-
     function randomBetween(a, b) { return a + Math.random() * (b - a); }
-
     function drawStar(cx, cy, r, rotation) {
       ctx.save();
       ctx.translate(cx, cy);
@@ -152,7 +140,6 @@
       ctx.fill();
       ctx.restore();
     }
-
     function spawnParticles(originX, originY) {
       for (let i = 0; i < 90; i++) {
         const shape = SHAPES[Math.random() < 0.35 ? 1 : 0];
@@ -176,11 +163,9 @@
         });
       }
     }
-
     function animateConfetti() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles = particles.filter(p => p.alpha > 0);
-
       for (const p of particles) {
         p.wobble += p.wobbleSpeed;
         p.x += p.vx + Math.sin(p.wobble) * 0.5;
@@ -188,10 +173,8 @@
         p.y += p.vy;
         p.rotation += p.spin;
         p.alpha -= p.decay;
-
         ctx.globalAlpha = Math.max(0, p.alpha);
         ctx.fillStyle   = p.color;
-
         if (p.shape === 'star') {
           drawStar(p.x, p.y, p.size * 0.7, p.rotation);
         } else {
@@ -202,9 +185,7 @@
           ctx.restore();
         }
       }
-
       ctx.globalAlpha = 1;
-
       if (particles.length > 0) {
         animId = requestAnimationFrame(animateConfetti);
       } else {
@@ -212,7 +193,6 @@
         animId = null;
       }
     }
-
     function launchConfetti(triggerEl) {
       const rect = triggerEl.getBoundingClientRect();
       const ox   = rect.left + rect.width  / 2;
@@ -222,7 +202,6 @@
       spawnParticles(ox, oy);
       animateConfetti();
     }
-
     // ── Toggle ──────────────────────────────────────────────────────────────
     function toggleAbstract(id, btn) {
       const abstract = document.getElementById(id);
@@ -236,6 +215,5 @@
       }
     }
   </script>
-
 </body>
 </html>
